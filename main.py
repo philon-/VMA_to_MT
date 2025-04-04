@@ -131,7 +131,7 @@ if __name__ == "__main__":
     INTERVAL = args.interval
     CHANNEL = args.ch_index
     
-    API_URL = f"https://vmaapi.sr.se/testapi/v3-beta/alerts?geocode={args.geocode}"
+    API_URL = f"https://vmaapi.sr.se/api/v3-beta/alerts?geocode={args.geocode}"
     MESHTASTIC_CMD_TEMPLATE = f"meshtastic --host localhost --ch-index {CHANNEL} --sendtext"  # Message will be appended at the end
 
     _LOGGER.info("Starting meshtastic_VMA")
