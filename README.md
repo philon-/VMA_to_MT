@@ -10,7 +10,7 @@ Requires `meshtastic` [Python CLI](https://meshtastic.org/docs/software/python/c
 Set up the script to run as a service using your service manager of choice.
 
 ```
-main.py [-h] [--verbose] [--ch-index CH_INDEX] [--interval INTERVAL] [--geocode GEOCODE]
+meshtastic_VMA.py [-h] [--verbose] [--ch-index CH_INDEX] [--interval INTERVAL] [--geocode GEOCODE]
 
 Fetches Swedish VMAs from Swedish Radio and broadcasts them to your local Meshtastic network.
 
