@@ -28,6 +28,6 @@ Available geocodes can be found at [SCB's website](https://www.scb.se/hitta-stat
 
 Any alerts retrieved in the first API call will not be broadcasted. This is intentional in order to not flood the network with duplicate alerts if the script is restarted.
 
-Messages (alert type and description) longer than 200 bytes will be trunkated in order to fit within one Meshtastic message.
+Messages (alert type and description) longer than 200 bytes will be truncated in order to fit within one Meshtastic message.
 
 Please be sensible when setting the interval setting as to not put undue strain on the API service.
