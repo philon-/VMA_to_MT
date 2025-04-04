@@ -48,7 +48,7 @@ def send_meshtastic_message(message):
     Call meshtastic to send message
     """
     meshtastic_cmd = MESHTASTIC_CMD_TEMPLATE
-    meshtastic_cmd.append("'"+message+"'")
+    meshtastic_cmd.append(message)
 
     try:
         result = subprocess.run(meshtastic_cmd, capture_output = True, text = True, check = True)
