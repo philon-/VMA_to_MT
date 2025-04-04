@@ -97,9 +97,9 @@ def main():
                 else:
                     continue
                 
-                message_trunkated = truncate_utf8(message)
+                message_truncated = truncate_utf8(message)
 
-                send_meshtastic_message(message_trunkated)
+                send_meshtastic_message(message_truncated)
 
         # Update our known alerts set
         known_alerts = current_alerts
