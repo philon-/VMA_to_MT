@@ -47,12 +47,14 @@ def send_meshtastic_message(message):
     """
     Call meshtastic to send message
     """
-    meshtastic_cmd = MESHTASTIC_CMD_TEMPLATE.strip()+" "+message
+    meshtastic_cmd = MESHTASTIC_CMD_TEMPLATE
+    meshtastic_cmd.append("'"+message+"'")
 
     try:
-        subprocess.run([meshtastic_cmd], check=True)
-        _LOGGER.info("Sent message: '%s' to channel %s", message, CHANNEL)
+        result = subprocess.run(meshtastic_cmd, capture_output = True, text = True, check = True)
+        _LOGGER.info(result.stdout)
     except subprocess.CalledProcessError as e:
+        _LOGGER.info(result.stderr)
         _LOGGER.error("Error sending message: %s to channel %s - %s", message, CHANNEL, e)
 
 
@@ -130,9 +132,9 @@ if __name__ == "__main__":
 
     INTERVAL = args.interval
     CHANNEL = args.ch_index
-    
+
     API_URL = f"https://vmaapi.sr.se/api/v3-beta/alerts?geocode={args.geocode}"
-    MESHTASTIC_CMD_TEMPLATE = f"/home/mesh/.local/bin/meshtastic --host localhost --ch-index {CHANNEL} --sendtext"  # Message will be appended at the end
+    MESHTASTIC_CMD_TEMPLATE = ["/home/mesh/.local/bin/meshtastic", "--host", "localhost", "--ch-index", CHANNEL, "--sendtext"]  # Message will be appended at the end
 
     _LOGGER.info("Starting meshtastic_VMA")
     _LOGGER.info("Verbose: %s, interval: %s, geocode: %s, ch-index: %s", str(args.verbose), str(args.interval), args.geocode, args.ch_index)
