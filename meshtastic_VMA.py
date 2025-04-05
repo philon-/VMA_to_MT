@@ -52,9 +52,9 @@ def send_meshtastic_message(message):
 
     try:
         result = subprocess.run(meshtastic_cmd, capture_output = True, text = True, check = True)
-        _LOGGER.info(result.stdout)
+        _LOGGER.info(result.stdout.strip())
     except subprocess.CalledProcessError as e:
-        _LOGGER.info(result.stderr)
+        _LOGGER.info(result.stderr.strip())
         _LOGGER.error("Error sending message: %s to channel %s - %s", message, CHANNEL, e)
 
 
