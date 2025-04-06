@@ -10,7 +10,7 @@ Requires `meshtastic` [Python CLI](https://meshtastic.org/docs/software/python/c
 Set up the script to run as a service using your service manager of choice.
 
 ```
-usage: meshtastic_VMA.py [-h] [--verbose] [--connection-type CONNECTION_TYPE] [--connection-argument CONNECTION_ARGUMENT] [--ch-index CH_INDEX] [--api-uri API_URI] [--api-interval API_INTERVAL] [--api-geocode API_GEOCODE] [--max-messages MAX_MESSAGES] [--repeat-number REPEAT_NUMBER] [--repeat-cycles REPEAT_CYCLES] executable
+usage: meshtastic_VMA.py [-h] [--verbose] [--dry-run] [--connection-type CONNECTION_TYPE] [--connection-argument CONNECTION_ARGUMENT] [--ch-index CH_INDEX] [--api-uri API_URI] [--api-interval API_INTERVAL] [--api-geocode API_GEOCODE] [--max-messages MAX_MESSAGES] [--repeat-number REPEAT_NUMBER] [--repeat-cycles REPEAT_CYCLES] executable
 
 Fetches Swedish VMAs from Swedish Radio and broadcasts them to your local Meshtastic network.
 
@@ -20,6 +20,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   --verbose             Increase output verbosity. [False]
+  --dry-run             Suspend calls to meshtastic executable [False]
   --connection-type CONNECTION_TYPE
                         Connection type (host/port/ble) [host]
   --connection-argument CONNECTION_ARGUMENT
@@ -33,10 +34,10 @@ options:
   --max-messages MAX_MESSAGES
                         Maximum number of messages to send for each alert. Will trunkate to this number of messages. [2]
   --repeat-number REPEAT_NUMBER
-                        Number of re-broadcasts to perform. [2]
+                        Number of re-broadcasts to perform. [1]
   --repeat-cycles REPEAT_CYCLES
                         Number of api-intervals between rebroadcast. [2]
-  ```
+```
 
 Example:
 
