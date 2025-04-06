@@ -113,7 +113,7 @@ def main():
     4. Sends message to meshtastic
     5. Waits before repeating.
     """
-    first = False
+    first = True
 
     known_alerts = set()  # Keep track of the alerts we have seen
 
@@ -218,7 +218,7 @@ Parameters:
 """)
 
     # Attempt connecting to radio
-    #if not call_meshtastic([args.executable], "--info"):
-    #    raise Exception("Could not communicate with meshtastic device") 
+    if not call_meshtastic([args.executable], "--info"):
+        raise Exception("Could not communicate with meshtastic device") 
     
     main()
