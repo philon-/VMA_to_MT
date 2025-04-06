@@ -88,7 +88,7 @@ def fetch_alerts():
     return alert_ids, data
 
 
-def call_meshtastic(template, message):
+def call_meshtastic(template, message, output=True):
     """
     Call meshtastic to send message
     """
@@ -97,7 +97,8 @@ def call_meshtastic(template, message):
 
     try:
         result = subprocess.run(meshtastic_cmd, capture_output = True, text = True, check = True)
-        _LOGGER.info(result.stdout.strip())
+        if output:
+            _LOGGER.info(result.stdout.strip())
         return result
     except subprocess.CalledProcessError as e:
         _LOGGER.error("Error running meshtastic command: %s", e)
@@ -218,7 +219,7 @@ Parameters:
 """)
 
     # Attempt connecting to radio
-    if not call_meshtastic([args.executable], "--info"):
+    if not call_meshtastic([args.executable], "--info", False):
         raise Exception("Could not communicate with meshtastic device") 
     
     main()
