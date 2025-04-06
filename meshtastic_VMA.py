@@ -123,10 +123,7 @@ def main():
 
     # This is how we handle message queueing.
     # This list contains new lists, each of which will contain messages. Every iteration, first list is .pop() and a new on appended. 
-    message_queue = [[] for i in range(REPEAT_NUM_CYCL)]
-
-    print()
-
+    message_queue = [[] for i in range(REPEAT_NUM_CYCL*REPEAT_NUM_MSG)]
     known_alerts = set()  # Keep track of the alerts we have seen
 
     while True:
@@ -140,7 +137,6 @@ def main():
             call_meshtastic(MESHTASTIC_CMD_TEMPLATE, message)
 
         message_queue.append([]) # Create new empty queue slot
-
 
         # Fetch new alerts
         current_alerts, data = fetch_alerts()
@@ -177,8 +173,9 @@ def main():
                     call_meshtastic(MESHTASTIC_CMD_TEMPLATE, message)
 
                 # Add new messages to queue
-                message_queue[-1].extend(new_messages)
-                _LOGGER.debug(f"QUEUE: Added {len(new_messages)} messages to queue slot {len(message_queue)}.")
+                for i in range(REPEAT_NUM_MSG):
+                    message_queue[(i+1)*REPEAT_NUM_CYCL-1].extend(new_messages)
+                    _LOGGER.debug(f"QUEUE: Added {len(new_messages)} messages to queue slot {(i+1)*REPEAT_NUM_CYCL}.")
 
 
         # Update our known alerts set
@@ -209,7 +206,7 @@ if __name__ == "__main__":
     parser.add_argument("--api-interval", type=int, default=120, help="Time interval in seconds at which API will be fetched. [120]")
     parser.add_argument("--api-geocode", type=str, default="00", help="Geocode. [00]")
     parser.add_argument("--max-messages", type=int, default=2, help="Maximum number of messages to send for each alert. Will trunkate to this number of messages. [2]")
-    parser.add_argument("--repeat-number", type=int, default=2, help="Number of re-broadcasts to perform. [2]")
+    parser.add_argument("--repeat-number", type=int, default=1, help="Number of re-broadcasts to perform. [1]")
     parser.add_argument("--repeat-cycles", type=int, default=2, help="Number of api-intervals between rebroadcast. [2]")
     args = parser.parse_args()
 
