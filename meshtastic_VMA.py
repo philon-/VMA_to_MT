@@ -4,7 +4,6 @@ from time import sleep
 from datetime import datetime
 import requests
 import subprocess
-import sys
 import logging
 import argparse
 
@@ -127,16 +126,16 @@ def main():
     known_alerts = set()  # Keep track of the alerts we have seen
 
     while True:
+        if REPEAT_NUM_MSG > 0 and REPEAT_NUM_CYCL > 0:
+            # Start by sending any queued messages
+            queued_messages = message_queue.pop(0)
 
-        # Start by sending any queued messages
-        queued_messages = message_queue.pop(0)
+            _LOGGER.debug(f"QUEUE: {len(queued_messages)} messages to be sent this iteration")
+            
+            for message in queued_messages:
+                call_meshtastic(MESHTASTIC_CMD_TEMPLATE, message)
 
-        _LOGGER.debug(f"QUEUE: {len(queued_messages)} messages to be sent this iteration")
-        
-        for message in queued_messages:
-            call_meshtastic(MESHTASTIC_CMD_TEMPLATE, message)
-
-        message_queue.append([]) # Create new empty queue slot
+            message_queue.append([]) # Create new empty queue slot
 
         # Fetch new alerts
         current_alerts, data = fetch_alerts()
@@ -172,10 +171,11 @@ def main():
                 for message in new_messages:
                     call_meshtastic(MESHTASTIC_CMD_TEMPLATE, message)
 
-                # Add new messages to queue
-                for i in range(REPEAT_NUM_MSG):
-                    message_queue[(i+1)*REPEAT_NUM_CYCL-1].extend(new_messages)
-                    _LOGGER.debug(f"QUEUE: Added {len(new_messages)} messages to queue slot {(i+1)*REPEAT_NUM_CYCL}.")
+                if REPEAT_NUM_MSG > 0 and REPEAT_NUM_CYCL > 0:
+                    # Add new messages to queue
+                    for i in range(REPEAT_NUM_MSG):
+                        message_queue[(i+1)*REPEAT_NUM_CYCL-1].extend(new_messages)
+                        _LOGGER.debug(f"QUEUE: Added {len(new_messages)} messages to queue slot {(i+1)*REPEAT_NUM_CYCL}.")
 
 
         # Update our known alerts set
