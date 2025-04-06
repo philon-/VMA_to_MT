@@ -132,7 +132,7 @@ def main():
                 alert = next((d for d in data['alerts'] if d["identifier"] == id), None)
 
                 if alert['status'] != "Test" and alert['msgType'] == "Cancel": # The previous alert is no longer active. Notably, the info field is empty.
-                    message = f"UPPHÄVD: Varningen utfärdad {datetime.fromisoformat(alert['sent']).strftime("%Y-%m-%d %H:%M")} är inte längre aktuell. Faran är över."
+                    message = f"UPPHÄVD: Varningen utfärdad {datetime.fromisoformat(alert['sent']).strftime('%Y-%m-%d %H:%M')} är inte längre aktuell. Faran är över."
 
                 elif alert['status'] == "Exercise" and alert['info'][0]['event'] == "Kvartalstest av utomhussignal för viktigt meddelande till allmänheten (VMA)":
                     message = "VMA TEST: Idag kl 15 testas “Viktigt meddelande”-signalen - 7s ljud följt av 14s tystnad under 2min. Efter testet ljuder “Faran över” - en 30s lång signal."
