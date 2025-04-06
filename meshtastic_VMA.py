@@ -96,10 +96,15 @@ def call_meshtastic(template, message, output=True):
     meshtastic_cmd.append(message)
 
     try:
-        result = subprocess.run(meshtastic_cmd, capture_output = True, text = True, check = True)
+        if not DRY_RUN:
+            result = subprocess.run(meshtastic_cmd, capture_output = True, text = True, check = True)
+            stdout = result.stdout
+        else:
+            stdout = "DRY RUN: "+message
+            
         if output:
-            _LOGGER.info(result.stdout.strip())
-        return result
+            _LOGGER.info(stdout.strip())
+        return stdout
     except subprocess.CalledProcessError as e:
         _LOGGER.error("Error running meshtastic command: %s", e)
         return False
@@ -114,12 +119,30 @@ def main():
     4. Sends message to meshtastic
     5. Waits before repeating.
     """
-    first = True
+    first = not DRY_RUN
+
+    # This is how we handle message queueing.
+    # This list contains new lists, each of which will contain messages. Every iteration, first list is .pop() and a new on appended. 
+    message_queue = [[] for i in range(REPEAT_NUM_CYCL)]
+
+    print()
 
     known_alerts = set()  # Keep track of the alerts we have seen
 
     while True:
-        # Fetch current alerts
+
+        # Start by sending any queued messages
+        queued_messages = message_queue.pop(0)
+
+        _LOGGER.debug(f"QUEUE: {len(queued_messages)} messages to be sent this iteration")
+        
+        for message in queued_messages:
+            call_meshtastic(MESHTASTIC_CMD_TEMPLATE, message)
+
+        message_queue.append([]) # Create new empty queue slot
+
+
+        # Fetch new alerts
         current_alerts, data = fetch_alerts()
 
         # Find what's new compared to known_alerts
@@ -147,13 +170,16 @@ def main():
                 else:
                     continue
                 
-                # Todo: Send repeated messages
-                messages = truncate_utf8(message)
-                _LOGGER.debug(f"Alert was split into {len(messages)} messages. Sending now")
+                new_messages = truncate_utf8(message)
+                _LOGGER.debug(f"Alert was split into {len(new_messages)} messages. Sending now")
 
-                for message in messages:
+                for message in new_messages:
                     call_meshtastic(MESHTASTIC_CMD_TEMPLATE, message)
-                    #sleep(5)
+
+                # Add new messages to queue
+                message_queue[-1].extend(new_messages)
+                _LOGGER.debug(f"QUEUE: Added {len(new_messages)} messages to queue slot {len(message_queue)}.")
+
 
         # Update our known alerts set
         known_alerts = current_alerts
@@ -175,6 +201,7 @@ if __name__ == "__main__":
 
     # Optional
     parser.add_argument("--verbose", action="store_true", help="Increase output verbosity. [False]")
+    parser.add_argument("--dry-run", action="store_true", help="Suspend calls to meshtastic executable [False]")
     parser.add_argument("--connection-type", type=str, default="host", help="Connection type (host/port/ble) [host]")
     parser.add_argument("--connection-argument", type=str, default="localhost", help="Connection argument [localhost]")
     parser.add_argument("--ch-index", type=str, default="0", help="Meshtastic channel to which messages will be sent. [0]")
@@ -190,7 +217,8 @@ if __name__ == "__main__":
         logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.DEBUG)
     else:
         logging.basicConfig(format='%(asctime)s %(levelname)s: %(message)s', level=logging.INFO)
-
+    
+    DRY_RUN = args.dry_run
     INTERVAL = args.api_interval
     CHANNEL = args.ch_index
     MAX_MESSAGES = args.max_messages
@@ -203,6 +231,7 @@ if __name__ == "__main__":
     _LOGGER.info(f"""Starting meshtastic_VMA\n
 Parameters:
     verbose: {args.verbose}
+    dry-run: {DRY_RUN}
     executable: {args.executable}
     connection-type: {args.connection_type}
     connection-argument: {args.connection_argument}
@@ -215,11 +244,10 @@ Parameters:
     repeat-cycles: {REPEAT_NUM_CYCL}
 
     Constructed API_URL: {API_URL}
-    Constructed MESHTASTIC_CMD_TEMPLATE: {" ".join(MESHTASTIC_CMD_TEMPLATE)} [message]
-""")
+    Constructed MESHTASTIC_CMD_TEMPLATE: {" ".join(MESHTASTIC_CMD_TEMPLATE)} [message]""")
 
     # Attempt connecting to radio
-    if not call_meshtastic([args.executable], "--info", False):
+    if not DRY_RUN and not call_meshtastic([args.executable], "--info", False):
         raise Exception("Could not communicate with meshtastic device") 
     
     main()
