@@ -1,7 +1,7 @@
-# meshtastic_VMA
-Broadcast issued VMAs on your local [Meshtastic](https://meshtastic.org/) network
+# VMA_to_MT
+Broadcast issued VMAs on your local [Meshtastic](https://meshtastic.org/)® network
 
-Uses [Sveriges Radio's API](https://vmaapi.sr.se/index.html?urls.primaryName=v3.0-beta) for Important Public Announcements / Viktigt meddelande till allmänheten (3.0-beta) to extract alerts for a given region and broadcast to a local Meshtastic network.
+Uses [Sveriges Radio's API](https://vmaapi.sr.se/index.html?urls.primaryName=v3.0-beta) for Important Public Announcements / Viktigt meddelande till allmänheten (3.0-beta) to extract alerts for a given region and broadcast to a local Meshtastic® network.
 
 Requires `meshtastic` [Python CLI](https://meshtastic.org/docs/software/python/cli/) to be installed.
 
@@ -52,3 +52,8 @@ Any alerts retrieved in the first API call will not be broadcasted. This is inte
 Alerts may be split into multiple nessages and/or truncated at 200 byte length in order to fit within Meshtastic message boundaries.
 
 Please be sensible when setting the interval setting as to not put undue strain on the API service.
+
+
+---
+
+Meshtastic® is a registered trademark of Meshtastic LLC. Meshtastic software components are released under various licenses, see GitHub for details. No warranty is provided - use at your own risk.
