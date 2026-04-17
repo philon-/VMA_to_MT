@@ -1,3 +1,8 @@
+---
+This project has been superceded by [meshdaemon](https://github.com/philon-/meshdaemon/).
+
+---
+
 # VMA_to_MT
 Broadcast issued VMAs on your local [Meshtastic](https://meshtastic.org/)® network
 
